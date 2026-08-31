@@ -22,14 +22,17 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: Update setuptools
+        run: python -m pip install --upgrade "setuptools>=83.0.0"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip uninstall -y httpx2 httpcore2
           pip install --force-reinstall --no-cache-dir -r requirements-dev.txt
+          python -m pip install --upgrade "setuptools>=83.0.0"
 
-      - name: Check for security issues
-        run: safety check
+      - name: Run Safety Security Scan
+        run: safety scan
   
   # Job 2 : Tests s'exécutent seulement si security-scan réussit
   test:
