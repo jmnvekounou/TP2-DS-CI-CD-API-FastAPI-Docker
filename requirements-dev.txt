@@ -4,4 +4,4 @@ fastapi
 httpx2
 numpy
 scikit-learn
-safety
+safety>=3.0.0
