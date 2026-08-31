@@ -31,4 +31,4 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$(pwd)
-          pytest --maxfail=1 --disable-warnings -q
+          pytest --maxfail=1 --disable-warnings -q --cov=app --cov-report=xml --cov-report=term-missing
