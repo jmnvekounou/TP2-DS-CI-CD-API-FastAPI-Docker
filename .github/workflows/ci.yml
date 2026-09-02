@@ -12,31 +12,25 @@ permissions:
 jobs:
   # Job 1 : Analyse de sécurité des dépendances (s'exécute en premier)
   security-scan:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      runs-on: ubuntu-24.04
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.10"
 
-      - name: Update setuptools
-        run: python -m pip install --upgrade "setuptools>=83.0.0"
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements-dev.txt
+            pip install pip-audit
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install --force-reinstall --no-cache-dir -r requirements-dev.txt
-          python -m pip install --upgrade "setuptools>=83.0.0"
-
-      - name: Run Safety Check
-        env:
-          PYTHONWARNINGS: "ignore::DeprecationWarning"
-        run: |
-          python -m pip install --upgrade pip
-          run: safety check
+        - name: Run Security Scan
+          run: |
+            pip-audit -r requirements-dev.txt
   
   # Job 2 : Tests s'exécutent seulement si security-scan réussit
   test:
