@@ -3,4 +3,3 @@ pytest-cov
 fastapi
 numpy
 scikit-learn
-safety<3.0.0
