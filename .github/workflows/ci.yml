@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  # Job 1 : Analyse de sécurité des dépendances
+  # Job 1 : Analyse de sécurité des dépendances (s'execute en premier)
   security-check:
     runs-on: ubuntu-24.04
     steps:
@@ -35,8 +35,9 @@ jobs:
         run: |
           safety check
 
-  # Job 2 : Tests s'exécutent en séparé
+  # Job 2 : Tests s'exécutent seulement si security-check réussit
   test:
+    needs: security-check # la ligne qui créé la dépendance
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
