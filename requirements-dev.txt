@@ -3,3 +3,4 @@ pytest-cov
 fastapi
 numpy
 scikit-learn
+safety
