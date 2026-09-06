@@ -37,7 +37,6 @@ jobs:
 
   # Job 2 : Tests (s'exécutent uniquement si security-check réussit)
   test:
-    needs: security-check
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
