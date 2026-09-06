@@ -10,49 +10,51 @@ permissions:
   contents: read
 
 jobs:
-  # Job 1 : Analyse de sécurité des dépendances (s'exécute en premier)
+  # Job 1 : Analyse de sécurité des dépendances
   security-check:
-      runs-on: ubuntu-24.04
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: "3.10"
-
-        - name: Install dependencies and Safety
-          run: |
-            python -m pip install --upgrade pip
-            pip install --force-reinstall --no-cache-dir -r requirements-dev.txt
-            pip install --upgrade "setuptools>=83.0.0" "wheel>0.46.1" "safety<3.0.0"
-
-        - name: Check for security issues
-          env:
-            PYTHONWARNINGS: "ignore::DeprecationWarning"
-          run: |
-            safety check --ignore SFTY-20260721-58460
-  
-  # Job 2 : Tests s'exécutent seulement si security-scan réussit
-  test:
     runs-on: ubuntu-24.04
     steps:
-      # Récupérer le code
       - name: Checkout code
         uses: actions/checkout@v4
-      # Configurer Python
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      # Installer les dépendances dev
+
+      - name: Install dependencies and Safety
+        run: |
+          python -m pip install --upgrade pip
+          pip install --force-reinstall --no-cache-dir -r requirements-dev.txt
+          # Mettre à jour setuptools, wheel et passer à Safety 3+
+          pip install --upgrade "setuptools>=83.0.0" "wheel>0.46.1" safety
+
+      - name: Check for security issues
+        env:
+          PYTHONWARNINGS: "ignore::DeprecationWarning"
+        run: |
+          safety check
+
+  # Job 2 : Tests (s'exécutent uniquement si security-check réussit)
+  test:
+    needs: security-check
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
       - name: Install dependencies (dev)
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade "setuptools>=83.0.0" "wheel>0.46.1"
           pip install -r requirements-dev.txt
-      # Tests unitaires / async
+          pip list
+
       - name: Run tests
         run: |
           export PYTHONPATH=$(pwd)
