@@ -35,7 +35,7 @@ jobs:
         run: |
           safety check
 
-  # Job 2 : Tests en job separe
+  # Job 2 : Tests s'exécutent en séparé
   test:
     runs-on: ubuntu-24.04
     steps:
