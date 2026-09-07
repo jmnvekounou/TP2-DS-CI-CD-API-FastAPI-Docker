@@ -1,6 +1,6 @@
 pytest
 pytest-cov
 fastapi
-httpx2
 numpy
 scikit-learn
+safety
